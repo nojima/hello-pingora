@@ -1,6 +1,6 @@
 # hello-pingora
 
-See `./examples`.
+See [./examples](./examples).
 
 ## How to run
 
