@@ -17,6 +17,8 @@ impl ProxyHttp for LB {
 }
 
 fn main() {
+    env_logger::init();
+
     let mut my_server = Server::new(None).unwrap();
     my_server.bootstrap();
 
