@@ -1,6 +1,8 @@
 // "Hello, world!" を返す HTTP サーバー。
 // 3000 番ポートで待ち受ける。
 
+use std::sync::atomic::{AtomicU64, Ordering};
+
 use async_trait::async_trait;
 use http::header::{CONTENT_LENGTH, CONTENT_TYPE};
 use http::Response;
@@ -9,12 +11,16 @@ use pingora::protocols::http::ServerSession;
 use pingora::server::Server;
 use pingora::services::listening::Service;
 
+// アクセスカウンター
+static COUNTER: AtomicU64 = AtomicU64::new(1);
+
 struct HelloApp;
 
 #[async_trait]
 impl ServeHttp for HelloApp {
     async fn response(&self, _server_session: &mut ServerSession) -> Response<Vec<u8>> {
-        let message = b"Hello, world!\r\n".to_vec();
+        let n = COUNTER.fetch_add(1, Ordering::SeqCst);
+        let message = format!("Hello, world!\r\nあなたは {n} 人目の訪問者です！\r\n").into_bytes();
         Response::builder()
             .status(200)
             .header(CONTENT_TYPE, "text/plain")
