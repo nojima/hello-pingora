@@ -1,18 +1,17 @@
 // 毎秒 upstreams.txt を読み込んで、その内容を使ってロードバランサーを更新する。
 // upstreams.txt には複数の upstream のアドレスを記述でき、このLBはそれらに対してラウンドロビンでプロキシする。
 // upstream には毎秒ヘルスチェックを行い、ダウンしているものは選択されない。
+// 8000 番ポートで待ち受ける。
+
+use std::collections::{BTreeSet, HashMap};
+use std::sync::Arc;
+use std::time::Duration;
 
 use async_trait::async_trait;
-use pingora::{
-    lb::{discovery::ServiceDiscovery, Backend, Backends},
-    prelude::*,
-    protocols::l4::socket::SocketAddr,
-};
-use std::{
-    collections::{BTreeSet, HashMap},
-    sync::Arc,
-    time::Duration,
-};
+use pingora::lb::discovery::ServiceDiscovery;
+use pingora::lb::{Backend, Backends};
+use pingora::prelude::*;
+use pingora::protocols::l4::socket::SocketAddr;
 
 struct LB {
     load_balancer: Arc<LoadBalancer<RoundRobin>>,

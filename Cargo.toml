@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 async-trait = "0.1"
 env_logger = "0.11"
+http = "1"
 log = "0.4"
-pingora = { version = "0.1", features = [ "lb" ] }
+pingora = { version = "0.3", features = [ "lb" ] }

@@ -1,8 +1,10 @@
 // リクエストが来るたびに upstream.txt からアドレスを読み込んでそこにプロキシする。
+// 8000 番ポートで待ち受ける。
+
+use std::net::SocketAddr;
 
 use async_trait::async_trait;
 use pingora::prelude::*;
-use std::net::SocketAddr;
 
 struct LB;
 
