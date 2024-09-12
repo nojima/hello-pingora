@@ -11,15 +11,15 @@ use pingora::protocols::http::ServerSession;
 use pingora::server::Server;
 use pingora::services::listening::Service;
 
-// アクセスカウンター
-static COUNTER: AtomicU64 = AtomicU64::new(1);
-
-struct HelloApp;
+struct HelloApp {
+    // アクセスカウンター
+    counter: AtomicU64,
+}
 
 #[async_trait]
 impl ServeHttp for HelloApp {
     async fn response(&self, _server_session: &mut ServerSession) -> Response<Vec<u8>> {
-        let n = COUNTER.fetch_add(1, Ordering::SeqCst);
+        let n = self.counter.fetch_add(1, Ordering::SeqCst);
         let message = format!("Hello, world!\r\nあなたは {n} 人目の訪問者です！\r\n").into_bytes();
         Response::builder()
             .status(200)
@@ -36,7 +36,10 @@ fn main() -> pingora::Result<()> {
     let mut server = Server::new(None)?;
     server.bootstrap();
 
-    let mut hello_service = Service::new("hello app".to_owned(), HelloApp);
+    let hello_app = HelloApp {
+        counter: AtomicU64::new(1),
+    };
+    let mut hello_service = Service::new("hello app".to_owned(), hello_app);
     hello_service.add_tcp("[::]:3000");
     server.add_service(hello_service);
 
