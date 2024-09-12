@@ -5,7 +5,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use async_trait::async_trait;
 use http::header::{CONTENT_LENGTH, CONTENT_TYPE};
-use http::Response;
+use http::{Response, StatusCode};
 use pingora::apps::http_app::ServeHttp;
 use pingora::protocols::http::ServerSession;
 use pingora::server::Server;
@@ -22,7 +22,7 @@ impl ServeHttp for HelloApp {
         let n = self.counter.fetch_add(1, Ordering::SeqCst);
         let message = format!("Hello, world!\r\nあなたは {n} 人目の訪問者です！\r\n").into_bytes();
         Response::builder()
-            .status(200)
+            .status(StatusCode::OK)
             .header(CONTENT_TYPE, "text/plain")
             .header(CONTENT_LENGTH, message.len())
             .body(message)
