@@ -39,7 +39,7 @@ fn main() {
     my_server.bootstrap();
 
     let mut lb = http_proxy_service(&my_server.configuration, LB);
-    lb.add_tcp("0.0.0.0:8000");
+    lb.add_tcp("[::]:8000");
     my_server.add_service(lb);
 
     my_server.run_forever();

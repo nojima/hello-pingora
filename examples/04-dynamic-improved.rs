@@ -83,7 +83,7 @@ fn main() {
             load_balancer: background.task(),
         },
     );
-    lb.add_tcp("0.0.0.0:8000");
+    lb.add_tcp("[::]:8000");
     my_server.add_service(lb);
     my_server.add_service(background);
 
